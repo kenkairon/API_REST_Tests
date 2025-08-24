@@ -19,14 +19,9 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Build backend image
-        run: docker build -t inventario .
-
-      - name: Run backend container
+      - name: Esperar a que el backend esté listo
         run: |
-          docker run -d -p 8080:8080 --name inventario inventario:latest
-          # Esperar a que el backend esté listo
-          echo "Esperando a que el backend esté listo..."
+          echo "Esperando backend en http://localhost:8080..."
           for i in {1..30}; do
             if curl -s http://localhost:8080/actuator/health | grep "UP"; then
               echo "Backend listo!"
@@ -41,7 +36,7 @@ jobs:
         run: npm install -g newman
 
       - name: Run API tests
-        run: newman run "SuitePruebas.json" -e "DemoAPI.json" --reporters cli,html --reporter-html-export reporte.html
+        run: newman run "tests/SuitePruebas.json" -e "tests/DemoAPI.json" --reporters cli,html --reporter-html-export reporte.html
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
@@ -49,6 +44,3 @@ jobs:
           name: test-report
           path: reporte.html
 
-      - name: Stop backend container
-        if: always()
-        run: docker stop inventario && docker rm inventario
