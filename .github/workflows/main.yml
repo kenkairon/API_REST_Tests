@@ -11,20 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Clonar el repositorio
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Instalar Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      - name: Install Newman and HTML reporter
+      # 3️⃣ Instalar Newman, HTML reporter y Puppeteer localmente
+      - name: Install dependencies
         run: |
           npm install -g newman
           npm install -g newman-reporter-html
-          npm install -g puppeteer
+          npm install puppeteer
 
+      # 4️⃣ Levantar contenedor del backend
       - name: Run backend container
         run: |
           docker run -d -p 8080:8080 --name inventario kenkairon/inventario:latest
@@ -39,6 +43,7 @@ jobs:
             fi
           done
 
+      # 5️⃣ Ejecutar tests de Postman y generar HTML con Bootstrap
       - name: Run API tests with Bootstrap HTML
         run: |
           mkdir -p reports
@@ -47,9 +52,10 @@ jobs:
             --reporter-html-export reports/reporte.html \
             --reporter-html-template templates/report-bootstrap.html
 
+      # 6️⃣ Convertir HTML a PNG usando Puppeteer
       - name: Convert HTML report to PNG
         run: |
-          node -e "
+          npx node -e "
           const puppeteer = require('puppeteer');
           (async () => {
             const browser = await puppeteer.launch({args:['--no-sandbox','--disable-setuid-sandbox']});
@@ -60,12 +66,14 @@ jobs:
           })();
           "
 
+      # 7️⃣ Subir reportes HTML y PNG como artifacts
       - name: Upload test reports
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: reports/
 
+      # 8️⃣ Detener y eliminar contenedor
       - name: Stop backend container
         if: always()
         run: docker stop inventario && docker rm inventario
