@@ -1,0 +1,245 @@
+{
+	"info": {
+		"_postman_id": "7c756515-1af6-4015-8387-367f77a1bd14",
+		"name": "Suite de Pruebas Demo API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35019552",
+		"_collection_link": "https://interstellar-spaceship-806529.postman.co/workspace/My-Workspace~80163d41-61bd-4160-8b17-bd7649130012/collection/35019552-7c756515-1af6-4015-8387-367f77a1bd14?action=share&source=collection_link&creator=35019552"
+	},
+	"item": [
+		{
+			"name": "nuevo-usuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();\r",
+							"\r",
+							"pm.test('201 Created', () => pm.response.to.have.status(201));\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Juan\",\r\n    \"apellido\": \"Pérez\",\r\n    \"rut\": \"12345678-9\",\r\n    \"email\": \"juan.perez@email.com\",\r\n    \"contrasena\": \"juan123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/auth/register",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Inicio-sesion",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();\r",
+							" \r",
+							"if(res && res.token) pm.environment.set('JWT_TOKEN', res.token);\r",
+							" \r",
+							"pm.test('200 OK', () => pm.response.to.have.status(200));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"juan.perez@email.com\",\r\n  \"contrasena\": \"juan123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/auth/login",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "agregar-producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();\r",
+							" \r",
+							"if(res && res.idProducto) pm.environment.set('producto_id', res.idProducto);\r",
+							" \r",
+							"pm.test('201 Created', () => pm.response.to.have.status(201));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc1MDU1NjA0NSwiZXhwIjoxNzUwNTkyMDQ1fQ.XIXPe6FZqmLOXD2deJQmzT-Z_LOb8u2x_tIS97obneM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Mouse HP Pavilion\",\r\n  \"descripcion\": \"Mouse insalambrico para pc\",\r\n  \"imagen\": \"img\",\r\n  \"stock\": 10,\r\n  \"precio\": 1000,\r\n  \"active\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/agregar-producto",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"agregar-producto"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener-productos",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc1MDU1NjA0NSwiZXhwIjoxNzUwNTkyMDQ1fQ.XIXPe6FZqmLOXD2deJQmzT-Z_LOb8u2x_tIS97obneM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/productos",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"productos"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqdWFuLnBlcmV6QGVtYWlsLmNvbSIsImlhdCI6MTc1NTQzODgzMSwiZXhwIjoxNzU1NDc0ODMxfQ.pDl7kNyWF-crdZK7g4JOnfQqdxN-rfFJClyyY6vqfl8",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "JWT_TOKEN",
+			"value": ""
+		}
+	]
+}
