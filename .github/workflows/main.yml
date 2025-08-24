@@ -21,12 +21,11 @@ jobs:
         with:
           node-version: '18'
 
-      # 3️⃣ Instalar Newman y HTML reporter
+      # 3️⃣ Instalar Newman y el reporter HTML
       - name: Install Newman and HTML reporter
         run: |
           npm install -g newman
           npm install -g newman-reporter-html
-          npm install -g puppeteer
 
       # 4️⃣ Levantar contenedor del backend
       - name: Run backend container
@@ -43,7 +42,7 @@ jobs:
             fi
           done
 
-      # 5️⃣ Ejecutar tests de Postman y generar HTML
+      # 5️⃣ Ejecutar tests de Postman
       - name: Run API tests
         run: |
           mkdir -p reports
@@ -51,29 +50,14 @@ jobs:
             --reporters cli,html \
             --reporter-html-export reports/reporte.html
 
-      # 6️⃣ Convertir HTML a imagen PNG usando Puppeteer
-      - name: Convert HTML report to PNG
-        run: |
-          node -e "
-          const puppeteer = require('puppeteer');
-          (async () => {
-            const browser = await puppeteer.launch({args:['--no-sandbox','--disable-setuid-sandbox']});
-            const page = await browser.newPage();
-            await page.goto('file://' + process.cwd() + '/reports/reporte.html');
-            await page.screenshot({path: 'reports/reporte.png', fullPage: true});
-            await browser.close();
-          })();
-          "
-
-      # 7️⃣ Subir reportes HTML y PNG como artifacts
+      # 6️⃣ Subir reportes HTML como artifact
       - name: Upload test reports
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: reports/
 
-      # 8️⃣ Detener y eliminar contenedor
+      # 7️⃣ Detener y eliminar contenedor
       - name: Stop backend container
         if: always()
         run: docker stop inventario && docker rm inventario
-
