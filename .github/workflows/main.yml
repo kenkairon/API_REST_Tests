@@ -21,12 +21,12 @@ jobs:
         with:
           node-version: '18'
 
-      # 3️⃣ Instalar Newman, HTML reporter y Puppeteer localmente
-      - name: Install dependencies
+      # 3️⃣ Instalar Newman y HTML reporter
+      - name: Install Newman and HTML reporter
         run: |
           npm install -g newman
           npm install -g newman-reporter-html
-          npm install puppeteer
+          npm install -g puppeteer
 
       # 4️⃣ Levantar contenedor del backend
       - name: Run backend container
@@ -43,19 +43,18 @@ jobs:
             fi
           done
 
-      # 5️⃣ Ejecutar tests de Postman y generar HTML con Bootstrap
-      - name: Run API tests with Bootstrap HTML
+      # 5️⃣ Ejecutar tests de Postman y generar HTML
+      - name: Run API tests
         run: |
           mkdir -p reports
           newman run "SuitePruebas.json" -e "DemoAPI.json" \
             --reporters cli,html \
-            --reporter-html-export reports/reporte.html \
-            --reporter-html-template templates/report-bootstrap.html
+            --reporter-html-export reports/reporte.html
 
-      # 6️⃣ Convertir HTML a PNG usando Puppeteer
+      # 6️⃣ Convertir HTML a imagen PNG usando Puppeteer
       - name: Convert HTML report to PNG
         run: |
-          npx node -e "
+          node -e "
           const puppeteer = require('puppeteer');
           (async () => {
             const browser = await puppeteer.launch({args:['--no-sandbox','--disable-setuid-sandbox']});
