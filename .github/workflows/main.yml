@@ -46,7 +46,7 @@ jobs:
       - name: Run API tests
         run: |
           mkdir -p reports
-          newman run "tests/SuitePruebas.json" -e "tests/DemoAPI.json" \
+          newman run "SuitePruebas.json" -e "DemoAPI.json" \
             --reporters cli,html \
             --reporter-html-export reports/reporte.html
 
